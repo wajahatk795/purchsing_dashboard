@@ -108,7 +108,7 @@
 
         <div class="form-actions">
 
-            <a href="{{ route('admin.dashboard') }}" class="btn-reset">
+            <a href="{{ route('admin.users') }}" class="btn-reset">
                 <i class="bx bx-arrow-back"></i>
                 Back
             </a>
