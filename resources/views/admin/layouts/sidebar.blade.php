@@ -14,32 +14,45 @@
                 <span class="menu-text">Dashboard</span>
             </a>
         </li>
+        @if (auth()->user()->role == 'admin' || auth()->user()->role == 'viewer')
+            <li class="menu-item {{ request()->is('admin/user') || request()->is('admin/user/*') ? 'active' : '' }}">
+                <a href="{{ route('admin.users') }}" class="menu-link">
+                    <i class="bx bxs-user-detail"></i>
+                    <span class="menu-text">Users List</span>
+                </a>
+            </li>
+            <li
+                class="menu-item {{ request()->is('admin/company') || request()->is('admin/company/*') ? 'active' : '' }}">
+                <a href="{{ route('admin.company') }}" class="menu-link">
+                    <i class="bx bxs-building-house"></i>
+                    <span class="menu-text">Company</span>
+                </a>
+            </li>
+            <li class="menu-item {{ request()->is('admin/unit') || request()->is('admin/unit/*') ? 'active' : '' }}">
+                <a href="{{ route('admin.unit') }}" class="menu-link">
+                    <i class="bx bx-layer"></i>
+                    <span class="menu-text">Unit</span>
+                </a>
+            </li>
+            <li
+                class="menu-item {{ request()->is('admin/purchasing') || request()->is('admin/purchasing/*') ? 'active' : '' }}">
+                <a href="{{ route('admin.purchasing') }}" class="menu-link">
+                    <i class="bx bxs-cart-download"></i>
+                    <span class="menu-text">Purchasing</span>
+                </a>
+            </li>
 
-        <li class="menu-item {{ request()->is('admin/users') || request()->is('admin/users/*') ? 'active' : '' }}">
-            <a href="{{ route('admin.users') }}" class="menu-link">
-                <i class="bx bxs-user-detail"></i>
-                <span class="menu-text">Users List</span>
-            </a>
-        </li>
-        <li class="menu-item {{ request()->is('admin/company') || request()->is('admin/company/*') ? 'active' : '' }}">
-            <a href="{{ route('admin.company') }}" class="menu-link">
-                <i class="bx bxs-building-house"></i>
-                <span class="menu-text">Company</span>
-            </a>
-        </li>
-        <li class="menu-item {{ request()->is('admin/unit') || request()->is('admin/unit/*') ? 'active' : '' }}">
-            <a href="{{ route('admin.unit') }}" class="menu-link">
-                <i class="bx bx-layer"></i>
-                <span class="menu-text">Unit</span>
-            </a>
-        </li>
-        <li
-            class="menu-item {{ request()->is('admin/purchasing') || request()->is('admin/purchasing/*') ? 'active' : '' }}">
-            <a href="{{ route('admin.purchasing') }}" class="menu-link">
-                <i class="bx bxs-cart-download"></i>
-                <span class="menu-text">Purchasing</span>
-            </a>
-        </li>
+
+            
+        @elseif(auth()->user()->role == 'editor')
+            <li
+                class="menu-item {{ request()->is('admin/purchasing') || request()->is('admin/purchasing/*') ? 'active' : '' }}">
+                <a href="{{ route('admin.purchasing') }}" class="menu-link">
+                    <i class="bx bxs-cart-download"></i>
+                    <span class="menu-text">Purchasing</span>
+                </a>
+            </li>
+        @endif
 
         {{-- <li class="menu-header">UI Elements</li>
         
@@ -66,12 +79,12 @@
 
         <li class="menu-header">Systems</li>
 
-        <li class="menu-item">
+        {{-- <li class="menu-item">
             <a href="{{ route('home') }}" class="menu-link">
                 <i class="bx bx-home-circle"></i>
                 <span class="menu-text">Landing Page</span>
             </a>
-        </li>
+        </li> --}}
 
         <li class="menu-item">
             <a href="#" class="menu-link" onclick="document.getElementById('logout-form').submit();">

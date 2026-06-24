@@ -9,7 +9,9 @@
             background-color: var(--bg-secondary) !important;
             border-bottom: 2px solid var(--border-color) !important;
         }
-        .filter-row input, .filter-row select {
+
+        .filter-row input,
+        .filter-row select {
             font-size: 12px !important;
             height: 32px !important;
             padding: 2px 8px !important;
@@ -19,16 +21,21 @@
             color: var(--text-primary) !important;
             width: 100%;
         }
-        .filter-row input:focus, .filter-row select:focus {
+
+        .filter-row input:focus,
+        .filter-row select:focus {
             outline: none !important;
             border-color: var(--accent-color) !important;
             box-shadow: 0 0 0 2px rgba(99, 102, 241, .12) !important;
         }
+
         /* Make table cells scrollable and prevent text wrapping */
-        .table-custom th, .table-custom td {
+        .table-custom th,
+        .table-custom td {
             white-space: nowrap !important;
             vertical-align: middle !important;
         }
+
         .table-responsive {
             overflow-x: auto !important;
             -webkit-overflow-scrolling: touch !important;
@@ -39,9 +46,11 @@
         <h2 class="page-title">Purchasing Management</h2>
 
         <div>
-            <a href="{{ route('admin.purchasing.create') }}" class="btn btn-primary">
-                Create Purchasing
-            </a>
+            @if (auth()->user()->role == 'admin' || auth()->user()->role == 'editor')
+                <a href="{{ route('admin.purchasing.create') }}" class="btn btn-primary">
+                    Create Purchasing
+                </a>
+            @endif
         </div>
     </div>
 
@@ -67,7 +76,9 @@
                         <th style="min-width: 130px;">Card</th>
                         <th style="min-width: 140px;">Card Name</th>
                         <th style="min-width: 120px;">Status</th>
-                        <th style="min-width: 90px;">Action</th>
+                        @if (auth()->user()->role != 'viewer')
+                            <th style="min-width: 90px;">Action</th>
+                        @endif
                     </tr>
                     <tr class="filter-row">
                         <th>
@@ -76,7 +87,7 @@
                         <th>
                             <select id="filter-company">
                                 <option value="">All</option>
-                                @foreach($companies as $company)
+                                @foreach ($companies as $company)
                                     <option value="{{ $company->id }}">{{ $company->company_name }}</option>
                                 @endforeach
                             </select>
@@ -84,7 +95,7 @@
                         <th>
                             <select id="filter-unit">
                                 <option value="">All</option>
-                                @foreach($units as $unit)
+                                @foreach ($units as $unit)
                                     <option value="{{ $unit->id }}">Unit #{{ $unit->id }}</option>
                                 @endforeach
                             </select>
@@ -114,7 +125,9 @@
                                 <option value="0">Pending</option>
                             </select>
                         </th>
-                        <th></th>
+                        @if (auth()->user()->role != 'viewer')
+                            <th></th>
+                        @endif
                     </tr>
                 </thead>
 
@@ -130,15 +143,83 @@
     <script>
         $(function() {
 
+            let columns = [
+
+                {
+                    data: 'id',
+                    render: function(data) {
+                        return '#' + data;
+                    }
+                },
+
+                {
+                    data: 'company_name',
+                    name: 'company.company_name'
+                },
+
+                {
+                    data: 'unit_name',
+                    name: 'unit_name'
+                },
+
+                {
+                    data: 'service_name',
+                    name: 'service_name'
+                },
+
+                {
+                    data: 'provider',
+                    name: 'provider'
+                },
+
+                {
+                    data: 'renew_date',
+                    name: 'renew_date'
+                },
+
+                {
+                    data: 'amount',
+                    name: 'amount'
+                },
+
+                {
+                    data: 'card',
+                    name: 'card'
+                },
+
+                {
+                    data: 'card_name',
+                    name: 'card_name'
+                },
+
+                {
+                    data: 'status',
+                    name: 'status'
+                }
+
+            ];
+
+            @if (auth()->user()->role != 'viewer')
+                columns.push({
+                    data: 'action',
+                    name: 'action',
+                    orderable: false,
+                    searchable: false
+                });
+            @endif
+
             var table = $('#purchasingTable').DataTable({
 
                 processing: true,
                 serverSide: true,
-                order: [[0, 'desc']],
+                order: [
+                    [0, 'desc']
+                ],
 
                 ajax: {
                     url: "{{ route('admin.purchasing.data') }}",
                     data: function(d) {
+
                         d.id = $('#filter-id').val();
                         d.company_id = $('#filter-company').val();
                         d.unit_id = $('#filter-unit').val();
@@ -152,63 +233,16 @@
                     }
                 },
 
-                columns: [
-                    {
-                        data: 'id',
-                        render: function(data) {
-                            return '#' + data;
-                        }
-                    },
-                    {
-                        data: 'company_name',
-                        name: 'company.company_name'
-                    },
-                    {
-                        data: 'unit_name',
-                        name: 'unit_name'
-                    },
-                    {
-                        data: 'service_name',
-                        name: 'service_name'
-                    },
-                    {
-                        data: 'provider',
-                        name: 'provider'
-                    },
-                    {
-                        data: 'renew_date',
-                        name: 'renew_date'
-                    },
-                    {
-                        data: 'amount',
-                        name: 'amount'
-                    },
-                    {
-                        data: 'card',
-                        name: 'card'
-                    },
-                    {
-                        data: 'card_name',
-                        name: 'card_name'
-                    },
-                    {
-                        data: 'status',
-                        name: 'status'
-                    },
-                    {
-                        data: 'action',
-                        name: 'action',
-                        orderable: false,
-                        searchable: false
-                    }
-                ]
+                columns: columns
 
             });
 
-            // Trigger table redraw when filter inputs change
-            $('.filter-row input, .filter-row select').on('keyup change clear', function() {
-                table.draw();
-            });
+            $('.filter-row input, .filter-row select').on(
+                'keyup change clear',
+                function() {
+                    table.draw();
+                }
+            );
 
         });
     </script>

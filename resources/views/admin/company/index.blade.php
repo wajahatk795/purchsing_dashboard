@@ -4,9 +4,11 @@
 
 @section('content')
     <div class="page-title-box">
-        <h2 class="page-title">companies Management</h2>
-        <div style="font-size: 13px; color: var(--text-secondary);"><a href="{{ route('admin.company.create') }}"
-                class="btn btn-primary">Create</a></div>
+        <h2 class="page-title">Companies Management</h2>
+        @if (auth()->user()->role == 'admin')
+            <div style="font-size: 13px; color: white;"><a href="{{ route('admin.company.create') }}"
+                    class="btn btn-primary">Create</a></div>
+        @endif
     </div>
 
     <div class="dashboard-card" style="width: 100%;">
@@ -22,7 +24,9 @@
                         <th>ID</th>
                         <th>Company Name</th>
                         <th>Registered Date</th>
-                        <th>Action</th>
+                        @if (auth()->user()->role == 'admin')
+                            <th>Action</th>
+                        @endif
                     </tr>
                 </thead>
                 {{-- <tbody>
@@ -79,13 +83,16 @@
                     {
                         data: 'created_at',
                         name: 'created_at'
-                    },
-                    {
-                        data: 'action',
-                        name: 'action',
-                        orderable: false,
-                        searchable: false
                     }
+
+                    @if (auth()->user()->role == 'admin')
+                        , {
+                            data: 'action',
+                            name: 'action',
+                            orderable: false,
+                            searchable: false
+                        }
+                    @endif
                 ]
             });
 

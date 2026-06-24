@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Company;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
-
+use Illuminate\Support\Facades\Auth;
 
 class CompanyController extends Controller
 {
@@ -29,59 +29,67 @@ class CompanyController extends Controller
                 'created_at'
             ]);
 
-            return DataTables::of($companies)
+            $datatable = DataTables::of($companies)
 
                 ->editColumn('company_name', function ($row) {
 
                     $letter = strtoupper(substr($row->company_name, 0, 1));
 
                     return '
-                <div style="display:flex;align-items:center;gap:10px;">
-                    <div style="
-                        width:28px;
-                        height:28px;
-                        border-radius:50%;
-                        background:var(--accent-color);
-                        color:white;
-                        display:flex;
-                        align-items:center;
-                        justify-content:center;
-                        font-weight:700;">
-                        ' . $letter . '
-                    </div>
+                    <div style="display:flex;align-items:center;gap:10px;">
+                        <div style="
+                            width:28px;
+                            height:28px;
+                            border-radius:50%;
+                            background:var(--accent-color);
+                            color:white;
+                            display:flex;
+                            align-items:center;
+                            justify-content:center;
+                            font-weight:700;">
+                            ' . $letter . '
+                        </div>
 
-                    <span>' . $row->company_name . '</span>
-                </div>';
+                        <span>' . $row->company_name . '</span>
+                    </div>';
                 })
 
                 ->editColumn('created_at', function ($row) {
                     return $row->created_at->format('M d, Y h:i A');
-                })
-                ->addColumn('action', function ($row) {
+                });
+
+            // Admin only actions
+            if (Auth::user()->role == 'admin') {
+
+                $datatable->addColumn('action', function ($row) {
 
                     return '
-        <a href="' . route('admin.company.edit', $row->id) . '"
-            class="btn btn-sm btn-primary">
-            <i class="bx bx-edit"></i>
-        </a>
+                    <a href="' . route('admin.company.edit', $row->id) . '"
+                        class="btn btn-sm btn-primary">
+                        <i class="bx bx-edit"></i>
+                    </a>
 
-        <form action="' . route('admin.company.destroy', $row->id) . '"
-            method="POST"
-            style="display:inline-block;"
-            onsubmit="return confirm(\'Are you sure you want to delete this company?\')">
+                    <form action="' . route('admin.company.destroy', $row->id) . '"
+                        method="POST"
+                        style="display:inline-block;"
+                        onsubmit="return confirm(\'Are you sure you want to delete this company?\')">
 
-            ' . csrf_field() . '
-            ' . method_field('DELETE') . '
+                        ' . csrf_field() . '
+                        ' . method_field('DELETE') . '
 
-            <button type="submit" class="btn btn-sm btn-danger">
-                <i class="bx bx-trash"></i>
-            </button>
-        </form>
-    ';
-                })
-                ->rawColumns(['company_name', 'action'])
+                        <button type="submit" class="btn btn-sm btn-danger">
+                            <i class="bx bx-trash"></i>
+                        </button>
+                    </form>
+                ';
+                });
 
-                ->make(true);
+                $datatable->rawColumns(['company_name', 'action']);
+            } else {
+                $datatable->rawColumns(['company_name']);
+            }
+
+            return $datatable->make(true);
         }
     }
 

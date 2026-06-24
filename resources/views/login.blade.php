@@ -57,7 +57,7 @@
                     <input type="checkbox" name="remember">
                     <span>Remember me</span>
                 </label>
-                <a href="{{ route('home') }}" style="color: var(--text-secondary);"><i class="bx bx-home-alt"></i> Back to Home</a>
+                {{-- <a href="{{ route('home') }}" style="color: var(--text-secondary);"><i class="bx bx-home-alt"></i> Back to Home</a> --}}
             </div>
 
             <button type="submit" class="auth-btn">
@@ -65,9 +65,9 @@
             </button>
         </form>
 
-        <div class="auth-footer-link">
+        {{-- <div class="auth-footer-link">
             Don't have an account? <a href="{{ route('register') }}">Register here</a>
-        </div>
+        </div> --}}
     </div>
 </body>
 </html>

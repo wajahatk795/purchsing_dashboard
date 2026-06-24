@@ -56,7 +56,82 @@
     <script src="{{ asset('js/admin.js') }}"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const amountChart = document.getElementById('amountChart');
 
+        new Chart(amountChart, {
+            type: 'line',
+            data: {
+                labels: [
+                    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+                    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+                ],
+                datasets: [{
+                    label: 'Total Amount',
+                    data: [
+                        {{ $monthlyAmounts[1] ?? 0 }},
+                        {{ $monthlyAmounts[2] ?? 0 }},
+                        {{ $monthlyAmounts[3] ?? 0 }},
+                        {{ $monthlyAmounts[4] ?? 0 }},
+                        {{ $monthlyAmounts[5] ?? 0 }},
+                        {{ $monthlyAmounts[6] ?? 0 }},
+                        {{ $monthlyAmounts[7] ?? 0 }},
+                        {{ $monthlyAmounts[8] ?? 0 }},
+                        {{ $monthlyAmounts[9] ?? 0 }},
+                        {{ $monthlyAmounts[10] ?? 0 }},
+                        {{ $monthlyAmounts[11] ?? 0 }},
+                        {{ $monthlyAmounts[12] ?? 0 }}
+                    ],
+                    borderColor: '#4f46e5',
+                    backgroundColor: 'rgba(79,70,229,0.15)',
+                    fill: true,
+                    tension: 0.4,
+                    borderWidth: 3,
+                    pointRadius: 5,
+                    pointHoverRadius: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: '#cbd5e1',
+                            font: {
+                                size: 13
+                            }
+                        }
+                    }
+                },
+
+                scales: {
+                    x: {
+                        ticks: {
+                            color: '#94a3b8'
+                        },
+                        grid: {
+                            color: 'rgba(255,255,255,0.05)'
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            color: '#94a3b8',
+                            callback: function(value) {
+                                return value.toLocaleString();
+                            }
+                        },
+                        grid: {
+                            color: 'rgba(255,255,255,0.05)'
+                        }
+                    }
+                }
+            }
+        });
+    </script>
     @stack('scripts')
 </body>
 

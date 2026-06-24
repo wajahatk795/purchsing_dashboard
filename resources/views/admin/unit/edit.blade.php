@@ -36,7 +36,7 @@
         .company-input {
             width: 100%;
             height: 48px;
-            padding: 0 15px 0 45px;
+            padding: 0 15px 0 15px;
             border: 1px solid var(--border-color);
             border-radius: 10px;
             background: var(--bg-secondary);

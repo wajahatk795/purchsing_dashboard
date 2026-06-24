@@ -36,7 +36,7 @@
         .company-input {
             width: 100%;
             height: 48px;
-            padding: 0 15px 0 45px;
+            padding: 0 15px 0 15px;
             border: 1px solid var(--border-color);
             border-radius: 10px;
             background: var(--bg-secondary);
@@ -160,12 +160,16 @@
 
                 <div class="col-md-6 mb-3">
                     <label>Amount</label>
-                    <input type="text" name="amount" class="company-input">
+
+                    <input type="number" name="amount" class="company-input" 
+                        min="0" step="0.01" required>
                 </div>
 
                 <div class="col-md-6 mb-3">
                     <label>Card</label>
-                    <input type="text" name="card" class="company-input">
+
+                    <input type="number" name="card" class="company-input" 
+                        min="0" required>
                 </div>
 
                 <div class="col-md-6 mb-3">

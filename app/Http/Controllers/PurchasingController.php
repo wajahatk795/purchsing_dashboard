@@ -7,6 +7,7 @@ use App\Models\Company;
 use App\Models\Purchasing;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Support\Facades\Auth;
 
 class PurchasingController extends Controller
 {
@@ -23,43 +24,78 @@ class PurchasingController extends Controller
 
             $purchasings = Purchasing::with(['company', 'unit']);
 
-            // Apply custom filters
+            // Editor can only see Xtend Systems
+            if (Auth::user()->role == 'editor') {
+
+                $purchasings->whereHas('company', function ($q) {
+                    $q->where('company_name', 'Xtend Systems');
+                });
+            }
+
             if ($request->filled('id')) {
                 $purchasings->where('id', $request->id);
             }
+
             if ($request->filled('company_id')) {
                 $purchasings->where('company_id', $request->company_id);
             }
-            if ($request->filled('unit_name')) {
 
-                $purchasings->whereHas('unit', function ($q) use ($request) {
-
-                    $q->where('unit_name', 'like', '%' . $request->unit_name . '%');
-                });
-            }
             if ($request->filled('service_name')) {
-                $purchasings->where('service_name', 'like', '%' . $request->service_name . '%');
+                $purchasings->where(
+                    'service_name',
+                    'like',
+                    '%' . $request->service_name . '%'
+                );
             }
+
             if ($request->filled('provider')) {
-                $purchasings->where('provider', 'like', '%' . $request->provider . '%');
+                $purchasings->where(
+                    'provider',
+                    'like',
+                    '%' . $request->provider . '%'
+                );
             }
+
             if ($request->filled('renew_date')) {
-                $purchasings->whereDate('renew_date', $request->renew_date);
+                $purchasings->whereDate(
+                    'renew_date',
+                    $request->renew_date
+                );
             }
+
             if ($request->filled('amount')) {
-                $purchasings->where('amount', 'like', '%' . $request->amount . '%');
+                $purchasings->where(
+                    'amount',
+                    'like',
+                    '%' . $request->amount . '%'
+                );
             }
+
             if ($request->filled('card')) {
-                $purchasings->where('card', 'like', '%' . $request->card . '%');
+                $purchasings->where(
+                    'card',
+                    'like',
+                    '%' . $request->card . '%'
+                );
             }
+
             if ($request->filled('card_name')) {
-                $purchasings->where('card_name', 'like', '%' . $request->card_name . '%');
+                $purchasings->where(
+                    'card_name',
+                    'like',
+                    '%' . $request->card_name . '%'
+                );
             }
-            if ($request->has('status') && $request->status !== null && $request->status !== '') {
+
+            if (
+                $request->has('status')
+                && $request->status !== null
+                && $request->status !== ''
+            ) {
                 $purchasings->where('status', $request->status);
             }
 
-            return DataTables::of($purchasings)
+            $datatable = DataTables::of($purchasings)
 
                 ->addColumn('company_name', function ($row) {
                     return $row->company?->company_name ?? 'N/A';
@@ -74,23 +110,23 @@ class PurchasingController extends Controller
                     $letter = strtoupper(substr($row->unit->unit_name, 0, 1));
 
                     return '
-        <div style="display:flex;align-items:center;gap:10px;">
-            <div style="
-                width:28px;
-                height:28px;
-                border-radius:50%;
-                background:var(--accent-color);
-                color:white;
-                display:flex;
-                align-items:center;
-                justify-content:center;
-                font-weight:700;">
-                ' . $letter . '
-            </div>
+                    <div style="display:flex;align-items:center;gap:10px;">
+                        <div style="
+                            width:28px;
+                            height:28px;
+                            border-radius:50%;
+                            background:var(--accent-color);
+                            color:white;
+                            display:flex;
+                            align-items:center;
+                            justify-content:center;
+                            font-weight:700;">
+                            ' . $letter . '
+                        </div>
 
-            <span>' . $row->unit->unit_name . '</span>
-        </div>
-    ';
+                        <span>' . $row->unit->unit_name . '</span>
+                    </div>
+                ';
                 })
 
                 ->editColumn('status', function ($row) {
@@ -103,38 +139,51 @@ class PurchasingController extends Controller
                 })
 
                 ->editColumn('renew_date', function ($row) {
-                    return $row->renew_date ? date('M d, Y', strtotime($row->renew_date)) : 'N/A';
-                })
+                    return $row->renew_date
+                        ? date('M d, Y', strtotime($row->renew_date))
+                        : 'N/A';
+                });
 
-                ->editColumn('created_at', function ($row) {
-                    return $row->created_at->format('M d, Y h:i A');
-                })
+            // Viewer cannot edit/delete
+            if (Auth::user()->role != 'viewer') {
 
-                ->addColumn('action', function ($row) {
+                $datatable->addColumn('action', function ($row) {
 
                     return '
-        <a href="' . route('admin.purchasing.edit', $row->id) . '" 
-           class="btn btn-sm btn-primary">
-            <i class="bx bx-edit"></i>
-        </a>
+                    <a href="' . route('admin.purchasing.edit', $row->id) . '"
+                        class="btn btn-sm btn-primary">
+                        <i class="bx bx-edit"></i>
+                    </a>
 
-        <form action="' . route('admin.purchasing.destroy', $row->id) . '" 
-              method="POST" 
-              style="display:inline-block;"
-              onsubmit="return confirm(\'Are you sure you want to delete this purchasing?\')">
+                    <form action="' . route('admin.purchasing.destroy', $row->id) . '"
+                        method="POST"
+                        style="display:inline-block;"
+                        onsubmit="return confirm(\'Delete this purchasing?\')">
 
-            ' . csrf_field() . '
-            ' . method_field('DELETE') . '
+                        ' . csrf_field() . '
+                        ' . method_field('DELETE') . '
 
-            <button type="submit" class="btn btn-sm btn-danger">
-                <i class="bx bx-trash"></i>
-            </button>
-        </form>
-    ';
-                })
+                        <button type="submit" class="btn btn-sm btn-danger">
+                            <i class="bx bx-trash"></i>
+                        </button>
+                    </form>
+                ';
+                });
 
-                ->rawColumns(['unit_name', 'status', 'action'])
-                ->make(true);
+                $datatable->rawColumns([
+                    'unit_name',
+                    'status',
+                    'action'
+                ]);
+            } else {
+
+                $datatable->rawColumns([
+                    'unit_name',
+                    'status'
+                ]);
+            }
+
+            return $datatable->make(true);
         }
     }
 

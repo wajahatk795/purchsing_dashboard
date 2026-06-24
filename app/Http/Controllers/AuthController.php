@@ -15,10 +15,9 @@ class AuthController extends Controller
     public function showLogin()
     {
         if (Auth::check()) {
-            return Auth::user()->isAdmin()
-                ? redirect()->route('admin.dashboard')
-                : redirect()->route('home');
+            return redirect()->route('admin.dashboard');
         }
+
         return view('login');
     }
 
@@ -35,11 +34,7 @@ class AuthController extends Controller
         if (Auth::attempt($credentials, $request->boolean('remember'))) {
             $request->session()->regenerate();
 
-            if (Auth::user()->isAdmin()) {
-                return redirect()->route('admin.dashboard')->with('success', 'Logged in as Admin successfully.');
-            }
-
-            return redirect()->route('home')->with('success', 'Logged in successfully.');
+            return redirect()->route('admin.dashboard')->with('success', 'Logged in successfully.');
         }
 
         return back()->withErrors([
@@ -66,30 +61,22 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'password' => ['required', 'string', 'min:6', 'confirmed'],
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255|unique:users,email',
+            'password' => 'required|min:6|confirmed',
+            'role' => 'required|in:admin,editor,viewer',
         ]);
 
-        // Auto role selection: first user signup is Admin, others are standard users
-        $role = User::count() === 0 ? 'admin' : 'user';
-
-        $user = User::create([
+        User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role' => $role,
+            'role' => $request->role,
         ]);
 
-        Auth::login($user);
-
-        $request->session()->regenerate();
-
-        if ($user->isAdmin()) {
-            return redirect()->route('admin.dashboard')->with('success', 'Registration successful! You are the first user, so you have been made Admin.');
-        }
-
-        return redirect()->route('home')->with('success', 'Registration successful!');
+        return redirect()
+            ->back()
+            ->with('success', 'User created successfully.');
     }
 
     /**
@@ -102,6 +89,6 @@ class AuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->route('home')->with('success', 'Logged out successfully.');
+        return redirect()->route('login')->with('success', 'Logged out successfully.');
     }
 }
