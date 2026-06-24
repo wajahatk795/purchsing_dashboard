@@ -189,10 +189,23 @@ class PurchasingController extends Controller
 
     public function create()
     {
-        $companies = Company::all();
+        if (Auth::user()->role == 'editor') {
+
+            $companies = Company::where(
+                'company_name',
+                'Xtend Systems'
+            )->get();
+        } else {
+
+            $companies = Company::all();
+        }
+
         $units = Unit::all();
 
-        return view('admin.purchasing.create', compact('companies', 'units'));
+        return view('admin.purchasing.create', compact(
+            'companies',
+            'units'
+        ));
     }
 
     public function store(Request $request)
@@ -218,12 +231,26 @@ class PurchasingController extends Controller
 
     public function edit(Purchasing $purchasing)
     {
-        $companies = Company::all();
+        if (Auth::user()->role == 'editor') {
+
+            $companies = Company::where(
+                'company_name',
+                'Xtend Systems'
+            )->get();
+        } else {
+
+            $companies = Company::all();
+        }
+
         $units = Unit::all();
 
         return view(
             'admin.purchasing.edit',
-            compact('purchasing', 'companies', 'units')
+            compact(
+                'purchasing',
+                'companies',
+                'units'
+            )
         );
     }
 

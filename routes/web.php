@@ -94,6 +94,9 @@ Route::middleware('auth')
             Route::get('/unit/data', [UnitController::class, 'getCompanies'])->name('unit.data');
 
             Route::get('/user', [UserController::class, 'index'])->name('users');
+
+            Route::get('/purchasing', [PurchasingController::class, 'index'])->name('purchasing');
+            Route::get('/purchasing/data', [PurchasingController::class, 'getPurchasings'])->name('purchasing.data');
         });
 
         /*
@@ -101,16 +104,7 @@ Route::middleware('auth')
         | ADMIN + VIEWER + EDITOR
         |--------------------------------------------------------------------------
         */
-
-        Route::middleware('role:admin,viewer,editor')->group(function () {
-
-            Route::get('/purchasing', [PurchasingController::class, 'index'])
-                ->name('purchasing');
-
-            Route::get('/purchasing/data', [PurchasingController::class, 'getPurchasings'])
-                ->name('purchasing.data');
-
-            // Purchasing
+        Route::middleware('role:admin,editor')->group(function () {
             Route::get('/purchasing/create', [PurchasingController::class, 'create'])->name('purchasing.create');
             Route::post('/purchasing/store', [PurchasingController::class, 'store'])->name('purchasing.store');
             Route::get('/purchasing/{purchasing}/edit', [PurchasingController::class, 'edit'])->name('purchasing.edit');

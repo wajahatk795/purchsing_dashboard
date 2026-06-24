@@ -41,7 +41,7 @@
                         <option value="">Select Unit</option>
 
                         @foreach ($units as $unit)
-                            <option value="{{ $unit->unit_name }}">
+                            <option value="{{ $unit->id }}">
                                 {{ $unit->unit_name }}
                             </option>
                         @endforeach
@@ -66,15 +66,13 @@
                 <div class="col-md-6 mb-3">
                     <label>Amount</label>
 
-                    <input type="number" name="amount" class="company-input" 
-                        min="0" step="0.01" required>
+                    <input type="number" name="amount" class="company-input" min="0" step="0.01" required>
                 </div>
 
                 <div class="col-md-6 mb-3">
                     <label>Card</label>
 
-                    <input type="number" name="card" class="company-input" 
-                        min="0" required>
+                    <input type="number" name="card" class="company-input" min="0" required>
                 </div>
 
                 <div class="col-md-6 mb-3">
