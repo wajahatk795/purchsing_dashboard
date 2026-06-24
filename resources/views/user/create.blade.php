@@ -82,21 +82,6 @@
                 </div>
             </div>
 
-            <div class="col-md-6">
-                <div class="form-group">
-                    <label class="form-label">
-                        <i class="bx bx-lock-alt"></i>
-                        Confirm Password
-                        <span class="required">*</span>
-                    </label>
-
-                    <input type="password"
-                           name="password_confirmation"
-                           class="company-input"
-                           placeholder="Confirm Password"
-                           required>
-                </div>
-            </div>
 
             <div class="col-md-6">
                 <div class="form-group">
