@@ -26,6 +26,9 @@
                         <th>Email Address</th>
                         <th>System Role</th>
                         <th>Registered Date</th>
+                        @if (auth()->user()->role != 'viewer')
+                            <th>Action</th>
+                        @endif
                     </tr>
                 </thead>
                 <tbody>
@@ -43,9 +46,33 @@
                             </td>
                             <td>{{ $user->email }}</td>
                             <td>
-                                <span class="badge badge-user">{{ $user->role }}</span>
+                                <span class="badge" style="background-color: blue; ">{{ $user->role }}</span>
                             </td>
                             <td>{{ $user->created_at->format('M d, Y h:i A') }}</td>
+                            @if (auth()->user()->role != 'viewer')
+                                <td>
+
+                                    <a href="{{ route('admin.users.edit', $user->id) }}" class="btn btn-sm btn-primary">
+                                        <i class="bx bx-edit"></i>
+                                    </a>
+
+                                    @if ($user->id != auth()->id())
+                                        <form action="{{ route('admin.users.destroy', $user->id) }}" method="POST"
+                                            style="display:inline-block;"
+                                            onsubmit="return confirm('Are you sure you want to delete this user?')">
+
+                                            @csrf
+                                            @method('DELETE')
+
+                                            <button type="submit" class="btn btn-sm btn-danger">
+                                                <i class="bx bx-trash"></i>
+                                            </button>
+
+                                        </form>
+                                    @endif
+
+                                </td>
+                            @endif
                         </tr>
                     @empty
                         <tr>

@@ -74,6 +74,9 @@ Route::middleware('auth')
             // Users
             Route::get('/user/create', [UserController::class, 'create'])->name('users.create');
             Route::post('/user/store', [AuthController::class, 'register'])->name('users.store');
+            Route::get('/user/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
+            Route::put('/user/{user}', [UserController::class, 'update'])->name('users.update');
+            Route::delete('/user/{user}', [UserController::class, 'destroy'])->name('users.destroy');
         });
 
         /*

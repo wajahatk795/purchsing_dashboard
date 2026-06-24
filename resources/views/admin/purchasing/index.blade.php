@@ -47,8 +47,8 @@
 
         <div>
             @if (auth()->user()->role == 'admin' || auth()->user()->role == 'editor')
-                <a href="{{ route('admin.purchasing.create') }}" class="btn btn-primary">
-                    Create Purchasing
+                <a href="{{ route('admin.purchasing.create') }}" style="color: white !important" class="btn btn-primary">
+                    Create
                 </a>
             @endif
         </div>
