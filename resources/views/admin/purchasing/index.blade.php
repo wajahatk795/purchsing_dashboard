@@ -98,9 +98,12 @@
                         </th>
                         <th>
                             <select id="filter-unit">
-                                <option value="">All</option>
+                                <option value="">All Units</option>
+
                                 @foreach ($units as $unit)
-                                    <option value="{{ $unit->id }}">Unit #{{ $unit->id }}</option>
+                                    <option value="{{ $unit->id }}">
+                                        {{ $unit->unit_name }}
+                                    </option>
                                 @endforeach
                             </select>
                         </th>
