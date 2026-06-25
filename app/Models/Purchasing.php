@@ -14,6 +14,7 @@ class Purchasing extends Model
         'card',
         'card_name',
         'status',
+        'username',
         'company_id',
         'unit_id',
     ];

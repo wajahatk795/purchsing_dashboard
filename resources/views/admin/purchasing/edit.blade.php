@@ -23,6 +23,10 @@
             @method('PUT')
 
             <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label>Username</label>
+                    <input type="text" name="username" class="company-input" value="{{ $purchasing->username }}">
+                </div>
 
                 <div class="col-md-6 mb-3">
                     <label>Company</label>

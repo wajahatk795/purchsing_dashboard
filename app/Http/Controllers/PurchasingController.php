@@ -36,8 +36,20 @@ class PurchasingController extends Controller
                 $purchasings->where('id', $request->id);
             }
 
+            if ($request->filled('username')) {
+                $purchasings->where(
+                    'username',
+                    'like',
+                    '%' . $request->username . '%'
+                );
+            }
+
             if ($request->filled('company_id')) {
                 $purchasings->where('company_id', $request->company_id);
+            }
+
+            if ($request->filled('unit_id')) {
+                $purchasings->where('unit_id', $request->unit_id);
             }
 
             if ($request->filled('service_name')) {
@@ -97,6 +109,10 @@ class PurchasingController extends Controller
 
             $datatable = DataTables::of($purchasings)
 
+                ->addColumn('username', function ($row) {
+                    return $row->username ?? 'N/A';
+                })
+
                 ->addColumn('company_name', function ($row) {
                     return $row->company?->company_name ?? 'N/A';
                 })
@@ -110,22 +126,22 @@ class PurchasingController extends Controller
                     $letter = strtoupper(substr($row->unit->unit_name, 0, 1));
 
                     return '
-                    <div style="display:flex;align-items:center;gap:10px;">
-                        <div style="
-                            width:28px;
-                            height:28px;
-                            border-radius:50%;
-                            background:var(--accent-color);
-                            color:white;
-                            display:flex;
-                            align-items:center;
-                            justify-content:center;
-                            font-weight:700;">
-                            ' . $letter . '
-                        </div>
-
-                        <span>' . $row->unit->unit_name . '</span>
+                <div style="display:flex;align-items:center;gap:10px;">
+                    <div style="
+                        width:28px;
+                        height:28px;
+                        border-radius:50%;
+                        background:var(--accent-color);
+                        color:white;
+                        display:flex;
+                        align-items:center;
+                        justify-content:center;
+                        font-weight:700;">
+                        ' . $letter . '
                     </div>
+
+                    <span>' . $row->unit->unit_name . '</span>
+                </div>
                 ';
                 })
 
@@ -144,29 +160,28 @@ class PurchasingController extends Controller
                         : 'N/A';
                 });
 
-            // Viewer cannot edit/delete
             if (Auth::user()->role != 'viewer') {
 
                 $datatable->addColumn('action', function ($row) {
 
                     return '
-                    <a href="' . route('admin.purchasing.edit', $row->id) . '"
-                        class="btn btn-sm btn-primary">
-                        <i class="bx bx-edit"></i>
-                    </a>
+                <a href="' . route('admin.purchasing.edit', $row->id) . '"
+                    class="btn btn-sm btn-primary">
+                    <i class="bx bx-edit"></i>
+                </a>
 
-                    <form action="' . route('admin.purchasing.destroy', $row->id) . '"
-                        method="POST"
-                        style="display:inline-block;"
-                        onsubmit="return confirm(\'Delete this purchasing?\')">
+                <form action="' . route('admin.purchasing.destroy', $row->id) . '"
+                    method="POST"
+                    style="display:inline-block;"
+                    onsubmit="return confirm(\'Delete this purchasing?\')">
 
-                        ' . csrf_field() . '
-                        ' . method_field('DELETE') . '
+                    ' . csrf_field() . '
+                    ' . method_field('DELETE') . '
 
-                        <button type="submit" class="btn btn-sm btn-danger">
-                            <i class="bx bx-trash"></i>
-                        </button>
-                    </form>
+                    <button type="submit" class="btn btn-sm btn-danger">
+                        <i class="bx bx-trash"></i>
+                    </button>
+                </form>
                 ';
                 });
 
@@ -217,6 +232,7 @@ class PurchasingController extends Controller
             'amount' => 'required',
             'card' => 'required',
             'card_name' => 'required',
+            'username' => 'required',
             'status' => 'required',
             'company_id' => 'required|exists:companies,id',
             'unit_id' => 'required|exists:units,id',
@@ -261,6 +277,7 @@ class PurchasingController extends Controller
             'provider' => 'required',
             'renew_date' => 'required',
             'amount' => 'required',
+            'username' => 'required',
             'card' => 'required',
             'card_name' => 'required',
             'status' => 'required',
@@ -269,6 +286,7 @@ class PurchasingController extends Controller
         ]);
 
         $purchasing->update([
+            'username' => $request->username,
             'service_name' => $request->service_name,
             'provider' => $request->provider,
             'renew_date' => $request->renew_date,

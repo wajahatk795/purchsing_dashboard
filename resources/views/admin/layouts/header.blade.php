@@ -3,10 +3,10 @@
         <button id="sidebar-toggle-btn" class="sidebar-toggle-btn" title="Toggle Sidebar">
             <i class="bx bx-menu"></i>
         </button>
-        <div class="search-box">
+        {{-- <div class="search-box">
             <i class="bx bx-search"></i>
             <input type="text" placeholder="Search...">
-        </div>
+        </div> --}}
     </div>
     
     <div class="header-right">
@@ -26,16 +26,16 @@
         </button> --}}
 
         <!-- Notifications -->
-        <button class="header-icon-btn" title="Notifications">
+        {{-- <button class="header-icon-btn" title="Notifications">
             <i class="bx bx-bell"></i>
             <span class="badge-count">7</span>
-        </button>
+        </button> --}}
 
         <!-- Messages -->
-        <button class="header-icon-btn" title="Messages">
+        {{-- <button class="header-icon-btn" title="Messages">
             <i class="bx bx-message-square-detail"></i>
             <span class="badge-count" style="background-color: var(--accent-color);">8</span>
-        </button>
+        </button> --}}
 
         <!-- User Profile -->
         <div class="user-profile">

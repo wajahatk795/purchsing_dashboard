@@ -67,6 +67,7 @@
                 <thead>
                     <tr>
                         <th style="min-width: 70px;">ID</th>
+                        <th style="min-width:140px;">Username</th>
                         <th style="min-width: 150px;">Company</th>
                         <th style="min-width: 110px;">Unit</th>
                         <th style="min-width: 160px;">Service Name</th>
@@ -83,6 +84,9 @@
                     <tr class="filter-row">
                         <th>
                             <input type="text" id="filter-id" placeholder="ID">
+                        </th>
+                        <th>
+                            <input type="text" id="filter-username" placeholder="Username">
                         </th>
                         <th>
                             <select id="filter-company">
@@ -153,6 +157,11 @@
                 },
 
                 {
+                    data: 'username',
+                    name: 'username'
+                },
+
+                {
                     data: 'company_name',
                     name: 'company.company_name'
                 },
@@ -208,19 +217,18 @@
                 });
             @endif
 
-            var table = $('#purchasingTable').DataTable({
+            let table = $('#purchasingTable').DataTable({
 
                 processing: true,
                 serverSide: true,
-                order: [
-                    [0, 'desc']
-                ],
 
                 ajax: {
                     url: "{{ route('admin.purchasing.data') }}",
+
                     data: function(d) {
 
                         d.id = $('#filter-id').val();
+                        d.username = $('#filter-username').val();
                         d.company_id = $('#filter-company').val();
                         d.unit_id = $('#filter-unit').val();
                         d.service_name = $('#filter-service-name').val();
@@ -233,12 +241,14 @@
                     }
                 },
 
+                order: [
+                    [0, 'desc']
+                ],
                 columns: columns
-
             });
 
             $('.filter-row input, .filter-row select').on(
-                'keyup change clear',
+                'keyup change',
                 function() {
                     table.draw();
                 }
